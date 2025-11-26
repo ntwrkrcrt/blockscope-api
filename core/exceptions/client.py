@@ -1,0 +1,2 @@
+class EmptyClientsException(Exception):
+    pass

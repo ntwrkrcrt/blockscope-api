@@ -1,0 +1,10 @@
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blockscope-tests
+    env_file:
+      - .env
+    entrypoint: ["pytest", "-v", "--tb=short"]
+    restart: "no"

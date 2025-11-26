@@ -1,0 +1,39 @@
+services:
+  redis:
+    image: redis:8-alpine
+    container_name: blockscope-redis
+    ports:
+      - "6382:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - blockscope-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blockscope-app
+    ports:
+      - "8021:8021"
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - blockscope-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  blockscope-network:
+    driver: bridge
